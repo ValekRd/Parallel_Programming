@@ -1,0 +1,10 @@
+ssh -p 60001 s51612@remote.vdi.mipt.ru
+
+
+mpicc -o <name_run_prog> <name_prog>.c
+
+mpirun -n <number_of_proc> <name_run_prog>
+
+mpicc -std=c99 -o <name_run_prog> <name_prog>.c
+
+scp <file> s51612@calcnoqueue.vdi.mipt.ru:~/Parallel_Programming/<file> //copy on server
