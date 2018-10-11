@@ -1,0 +1,16 @@
+[6 semester]
+ssh -p 60001 s51612@remote.vdi.mipt.ru
+
+mpicc -o <run_file_name> <prog_name>.c
+
+mpirun -n <number_of_proc> <run_file_name>
+
+mpicc -std=c99 -o <run_file_name> <prog_name>.c
+
+scp <file> s51612@calcnoqueue.vdi.mipt.ru:~/Parallel_Programming/<file> //copy on server
+
+[7 semester]
+ssh -p 60001 s51612@remote.vdi.mipt.ru
+
+gcc <prog_name>.c -o <run_file_name> -fopenmp -std=c99
+./<run_file_name> <amount_of_process
