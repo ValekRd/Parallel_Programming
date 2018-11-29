@@ -1,6 +1,7 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 long double list_sum(long double* list, int N){
 	long double sum = 0.0;
 	for(int i = 0; i < N; i++)

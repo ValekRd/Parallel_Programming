@@ -1,39 +1,54 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <omp.h>
 
-int main (int argc, char *argv[])
-{
-    if (argc != 3)
-    {
-        printf("launch: ./task3 [N] [threads]\n");
-        exit(EXIT_FAILURE);
+int main(int argc, char** argv) {
+    int num_threads = 0;
+    int num_iter = 0;
+
+    // two arguments: number of threads and iterations quantity
+    if (argc < 3) {
+        printf("Missing %d argument(s)!\n", 3 - argc);
+
+        return 0;
+    } else {
+        num_threads = atoi(argv[1]);
+        num_iter = atoi(argv[2]);
     }
-    unsigned N = atoi(argv[1]);
-    unsigned n = atoi(argv[2]);
+
+    omp_set_num_threads(num_threads);
+
+    // let define array of factorials
+    long double factorial[num_iter + 1];
+    int i = 0;
+
+    factorial[0] = 1.0;
+
+    // notice that loop borders are: [1, num_iter]
+    for (i = 1; i < num_iter + 1; i++) {
+        factorial[i] = factorial[i - 1] * i;
+    }
+
+    // here ara 'num_threads' local sums for reducing computing error
+    long double loc_sum[num_threads];
+
+    for (i = 0; i < num_threads; i++) {
+        loc_sum[i] = 0.0;
+    }
+
+    #pragma omp parallel for private(i) schedule(static)
+    for (i = num_iter; i >= 0; i--) {
+        loc_sum[omp_get_thread_num()] += 1.0 / factorial[i];
+    }
+
     long double sum = 0.0;
-    long double *part_sum = (long double*)calloc(n, sizeof(long double));
-    long double *part_fact = (long double*)calloc(n, sizeof(long double));
-#pragma omp parallel num_threads(n)
-    {
-        unsigned t = omp_get_thread_num();
-        part_sum[t] = 0.0;
-        part_fact[t] = 1.0;
-        for (unsigned i = N / n * t + 1; i <= N / n * (t + 1); ++i)
-        {
-            part_fact[t] /= i;
-            part_sum[t] += part_fact[t];
-        }
+
+    for (i = num_threads - 1; i >= 0; i--) {
+        //printf("loc_sum[%d] = %.20Lf\n", i, loc_sum[i]);
+        sum += loc_sum[i];
     }
-    for (unsigned i = 1; i < n; ++i)
-    {
-        part_sum[i] *= part_fact[i-1];
-        part_fact[i] *= part_fact[i-1];
-    }
-    for (unsigned i = n; i > 0; --i)
-        sum += part_sum[i-1];
-    printf ("ans = %.20Lf\n", sum + 1.0);
-    free(part_sum);
-    free(part_fact);
+
+    printf("e = %.20Lf\n", sum);
+
+
     return 0;
 }

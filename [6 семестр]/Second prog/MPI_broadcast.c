@@ -11,7 +11,7 @@ int main(int argc, char*argv[])
     int num_proc = 0;
     
     double result;
-    double start_time = 0
+    double start_time = 0;
     double end_time = 0;
     
         MPI_Init(&argc, &argv);                         // инициализация MPI
@@ -50,7 +50,7 @@ MPI_Barrier(MPI_COMM_WORLD);
     
         if (rank == 0)
         {
-                printf("TIME = %lf\n", result/N);
+                printf("TIME = %lf\n", result);
         }
         MPI_Finalize();
         return 0;
